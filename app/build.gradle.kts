@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    kotlin("android") version "1.9.0"
+    kotlin("android") version "2.0.21"
     id("org.jetbrains.kotlin.android.compose") version "1.5.3"
 }
 
@@ -20,30 +20,33 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("keystore.jks")
-            storePassword = System.getenv("KEYSTORE_PASSWORD")
-            keyAlias = System.getenv("KEY_ALIAS")
-            keyPassword = System.getenv("KEY_PASSWORD")
+            val keystoreFile = rootProject.file("keystore.jks")
+            
+            if (keystoreFile.exists()) {
+                storeFile = keystoreFile
+                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+                keyAlias = System.getenv("KEY_ALIAS") ?: ""
+                keyPassword = System.getenv("KEY_PASSWORD") ?: ""
+            }
         }
     }
 
-    buildTypes {
+   buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-            signingConfig = signingConfigs.getByName("release") // <-- 指向簽名配置
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+
+            val canSign = System.getenv("KEYSTORE_PASSWORD") != null
+            signingConfig = if (canSign) signingConfigs.getByName("release") else signingConfigs.getByName("debug")
         }
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
