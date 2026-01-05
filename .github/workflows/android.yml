@@ -3,7 +3,7 @@ name: APK release
 on:
   push:
     tags:
-    - "v*"
+      - "v*"
 
 jobs:
   build:
@@ -23,18 +23,28 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Build APK (Debug)
-      run: ./gradlew assembleDebug
+    - name: Decode keystore
+      run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > keystore.jks
 
-    - name: Upload APK
+    - name: Build Release APK
+      id: build
+      run: ./gradlew assembleRelease
+      env:
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+    - name: Upload Release APK
+      if: success()
       uses: actions/upload-artifact@v4
       with:
-        name: PhotoDeleter-Debug
-        path: app/build/outputs/apk/debug/app-debug.apk
+        name: PhotoDeleter-Release
+        path: app/build/outputs/apk/release/app-release.apk
 
     - name: Create Release
+      if: success()
       uses: softprops/action-gh-release@v1
       with:
-        files: app/build/outputs/apk/debug/app-debug.apk
+        files: app/build/outputs/apk/release/app-release.apk
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
