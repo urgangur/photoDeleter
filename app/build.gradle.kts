@@ -1,3 +1,8 @@
+plugins {
+    id("com.android.application")
+    kotlin("android")
+}
+
 android {
     namespace = "com.urgangur.photodeleter"
     compileSdk = 36
