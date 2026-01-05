@@ -20,7 +20,7 @@ android {
 
     signingConfigs {
         create("release") {
-            val keystoreFile = file("keystore.jks")
+            val keystoreFile = file("../keystore.jks")
             
             if (keystoreFile.exists()) {
                 storeFile = keystoreFile
