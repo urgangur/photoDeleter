@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
-    kotlin("android")
-    id("org.jetbrains.kotlin.android.compose")
+    kotlin("android") version "1.9.0"
+    id("org.jetbrains.kotlin.android.compose") version "1.5.3"
 }
 
 android {
@@ -13,7 +13,7 @@ android {
         minSdk = 30
         targetSdk = 36
         versionCode = 1
-        versionName = "1.1"
+        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
